@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tasklist/bloc/tasklist_bloc.dart';
+import 'package:tasklist/models/taskmodel.dart';
 import 'dialogscreen.dart';
 
 class TaskList extends StatefulWidget {
@@ -13,7 +14,7 @@ class _TaskListState extends State<TaskList> {
   bool _loadgin = true;
   TaskListControl _tasklistcontrol = TaskListControl();
   dynamic _statusError;
-  List<dynamic>? _task;
+  List<TaskModel>? _task;
 
   @override
   void initState() {
@@ -40,7 +41,7 @@ class _TaskListState extends State<TaskList> {
 
   @override
   Widget build(BuildContext context) {
-    List _removeItems = [];
+    List<TaskModel> _removeItems = [];
     if (_loadgin) {
       return Scaffold(
         body: Center(
@@ -81,7 +82,7 @@ class _TaskListState extends State<TaskList> {
                   child: StreamBuilder(
                       initialData: _task,
                       stream: _tasklistcontrol.outpoutnewtasklist,
-                      builder: (context, AsyncSnapshot<List<dynamic>> snapshot) {
+                      builder: (context, AsyncSnapshot<List<TaskModel>> snapshot) {
                         if (snapshot.hasError) {
                           return Center(
                             child: Text(snapshot.error.toString(),
@@ -99,8 +100,8 @@ class _TaskListState extends State<TaskList> {
                               itemCount: snapshot.data!.length,
                               itemBuilder: (context, index) {
                                 return ListTile(
-                                  title: Text(snapshot.data![index]["task"]),
-                                  trailing: Checkbox(value: snapshot.data![index]["isComplete"],
+                                  title: Text(snapshot.data![index].task!),
+                                  trailing: Checkbox(value: snapshot.data![index].isComplete,
                                   onChanged: (change) {
                                     _tasklistcontrol.upStateItemList(
                                       snapshot.data!, 

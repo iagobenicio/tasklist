@@ -2,15 +2,15 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
-
+import 'package:tasklist/models/taskmodel.dart';
 
 
 class TaskListControl{
 
-  StreamController<List> _newtasklist = StreamController();
+  StreamController<List<TaskModel>> _newtasklist = StreamController();
 
-  Sink<List> get inputnewtasklist => _newtasklist.sink;
-  Stream<List> get outpoutnewtasklist => _newtasklist.stream;
+  Sink<List<TaskModel>> get inputnewtasklist => _newtasklist.sink;
+  Stream<List<TaskModel>> get outpoutnewtasklist => _newtasklist.stream;
 
 
   StreamController<bool> _showButton = StreamController();
@@ -49,7 +49,7 @@ class TaskListControl{
   }
 
   
-  Future<List> getDataFromFile()async{
+  Future<List<TaskModel>> getDataFromFile()async{
 
     try {
 
@@ -60,8 +60,13 @@ class TaskListControl{
       if(dataFromFile.isNotEmpty){
         
         List dataToJson = jsonDecode(dataFromFile);
-        dataToJson = List.from(dataToJson.reversed);
-        return dataToJson;
+
+        List<TaskModel> taskList = dataToJson.map((element)
+          => TaskModel.fromJson(element)
+        ).toList();
+
+        List<TaskModel> dataTaskModel = List.from(taskList.reversed);
+        return dataTaskModel;
 
       }else{
         return [];
@@ -97,8 +102,13 @@ class TaskListControl{
         var jsonDataFileUp = jsonEncode(dataToJsonList);
 
         await pathfile.writeAsString(jsonDataFileUp);
-        dataToJsonList = List.from(dataToJsonList.reversed);
-        inputnewtasklist.add(dataToJsonList); 
+
+        List<TaskModel> taskmodel = dataToJsonList.map((element) 
+          => TaskModel.fromJson(element)
+        ).toList();
+
+        List<TaskModel> dataTaskmodel = List.from(taskmodel.reversed);
+        inputnewtasklist.add(dataTaskmodel); 
 
       }else{
 
@@ -112,8 +122,12 @@ class TaskListControl{
         var jsonDataFileUp = jsonEncode(newListDataToFile);
 
         await pathfile.writeAsString(jsonDataFileUp);
-        newListDataToFile = List.from(newListDataToFile.reversed);
-        inputnewtasklist.add(newListDataToFile);
+        
+        List<TaskModel>? tasklist;
+        tasklist!.add(TaskModel.fromJson(mapTask));
+
+        List<TaskModel> newdataTaskmodel = List.from(tasklist.reversed);
+        inputnewtasklist.add(newdataTaskmodel);
 
       }
       
@@ -128,7 +142,7 @@ class TaskListControl{
   
   }
 
-  void upStateItemList(List<dynamic> listItems, int indexCahnge, bool? change){
+  void upStateItemList(List<TaskModel> listItems, int indexCahnge, bool? change){
     
     if (change == true) {
       
@@ -151,19 +165,23 @@ class TaskListControl{
 
     }
 
-    listItems[indexCahnge]["isComplete"] = change;
+    listItems[indexCahnge].isComplete = change;
     inputnewtasklist.add(listItems);
   }
 
 
-  void completeTask(List<dynamic> listItems)async{
-    listItems.removeWhere((element) => element["isComplete"] == true);
+  void completeTask(List<TaskModel> listItems)async{
+    listItems.removeWhere((element) => element.isComplete == true);
 
     try {
 
       final pathfile = await getDirectoryFile();
       
-      String listToString = jsonEncode(listItems);
+      List<Map<String,dynamic>> taskModelToJson = listItems.map((e) 
+         => e.toJson()
+      ).toList();
+
+      String listToString = jsonEncode(taskModelToJson);
 
       await pathfile.writeAsString(listToString);
 
@@ -178,7 +196,7 @@ class TaskListControl{
        _newtasklist.addError(e.message);
     } 
     catch(e){
-      _newtasklist.addError("Algum erro ocorreu");
+      _newtasklist.addError(e);
     }
 
   }
