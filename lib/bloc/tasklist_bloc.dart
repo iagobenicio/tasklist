@@ -12,6 +12,7 @@ class TaskListControl{
   Sink<List<TaskModel>> get inputnewtasklist => _newtasklist.sink;
   Stream<List<TaskModel>> get outpoutnewtasklist => _newtasklist.stream;
 
+  
 
   StreamController<bool> _showButton = StreamController();
   bool showbutton = false;
@@ -109,7 +110,7 @@ class TaskListControl{
 
         List<TaskModel> dataTaskmodel = List.from(taskmodel.reversed);
         inputnewtasklist.add(dataTaskmodel); 
-
+  
       }else{
 
         List newListDataToFile = [];
@@ -201,10 +202,10 @@ class TaskListControl{
 
   }
 
-  void closeTaskStream()async{
+  void closeTaskStream(){
 
-    await _newtasklist.close();
-    await _showButton.close();
+    _newtasklist.close();
+    _showButton.close();
     
   }
   

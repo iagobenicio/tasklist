@@ -11,7 +11,7 @@ void main() {
         subtitle1: TextStyle(color: Colors.white)
       ),
       scaffoldBackgroundColor: Color.fromRGBO(56, 60, 74, 1),
-      accentColor: Color.fromRGBO(82, 148, 226, 1),
+      colorScheme: ColorScheme.fromSwatch().copyWith(secondary: Color.fromRGBO(82, 148, 226, 1)),
       checkboxTheme: CheckboxThemeData(
         fillColor: MaterialStateColor.resolveWith((states) => Color.fromRGBO(
             124, 129, 140, 1
