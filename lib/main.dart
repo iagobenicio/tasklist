@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tasklist/pages/tasklistpage.dart';
+import 'package:tasklist/screens/tasklistpage.dart';
 
 void main() {
   runApp(MaterialApp(
